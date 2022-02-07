@@ -72,7 +72,14 @@ const getMainRelease = async (id) => {
   return handleResponse(res)
 }
 
-const writeTag = (str) => `#${str.toLowerCase()}`
+const unique = (x, idx, self) => self.indexOf(x) === idx
+const writeTag = (str) => {
+  if (/ /.test(str)) {
+    return `#[[${str.toLowerCase()}]]`
+  } else {
+    return `#${str.toLowerCase()}`
+  }
+}
 
 //create new block and place data
 const addRelease = (release, page_uid) => {
@@ -94,7 +101,7 @@ const addRelease = (release, page_uid) => {
 
   window.roamAlphaAPI.createBlock({
     location: { 'parent-uid': page_uid, order: 2 },
-    block: { string: `tags:: ${tags.map(writeTag).join(' ')}` },
+    block: { string: `tags:: ${tags.filter(unique).map(writeTag).join(' ')}` },
   })
 
   window.roamAlphaAPI.createBlock({
