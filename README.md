@@ -15,6 +15,8 @@
 - You can now create blocks with the text `{{Discogs Search}} <search terms here>`
 - A button will appear. Click it and the release details will be written to your Roam graph.
 
+![Usage video](how-to.gif)
+
 ## TODO
 
 - better message to user when no results; only logs to console currently
