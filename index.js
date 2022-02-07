@@ -36,7 +36,7 @@ discogsBtn.handleClick = async (e) => {
     const uid = block.id.substring(block.id.length - 9)
     const content = await window.roamAlphaAPI
       .q(`[:find (pull ?block [:block/string]) 
-					:where [?block :block/uid "${uid}"]]`)[0][0].string
+          :where [?block :block/uid "${uid}"]]`)[0][0].string
 
     if (!content) return
 
