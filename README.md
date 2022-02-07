@@ -6,7 +6,7 @@
 - Click "Yes, I know what I'm doing".
 - Create a new block as a child.
 - Type a backslash (`/`), then find and select the "Javascript Code Block" option.
-- Paste the contents of this file into the child block.
+- Paste the contents of `index.js` into the child block.
 - Get an API token from Discogs: https://www.discogs.com/settings/developers
 - Replace your token in the code (line 22).
 
