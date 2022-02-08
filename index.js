@@ -72,9 +72,11 @@ const handleResponse = async (res) => {
   }
 }
 
-const getSearchResults = async (query) => {
+const getSearchResults = async (query, isMaster = true) => {
   const res = await fetch(
-    `https://api.discogs.com/database/search?token=${token}&type=master&q=${query}`
+    `https://api.discogs.com/database/search?token=${token}&q=${query}${
+      isMaster ? '&type=master' : ''
+    }`
   )
 
   return handleResponse(res)
@@ -106,11 +108,12 @@ const writeTag = (str) => {
 }
 
 const addRelease = (release, page_uid) => {
-  const { artists, title, year, genres, styles, label } = release
+  const { artists, title, year, genres, styles, labels } = release
   const tags = [...genres, ...styles]
 
-  const artistStr = artists.map(({ name }) => name).join(artists.join)
-  const mainText = `${artistStr}, __${title}__ ([[${year}]])`
+  const artistsJoined = artists.map(({ name }) => name).join(artists.join)
+  const mainText = `${artistsJoined}, __${title}__ ([[${year}]])`
+  const label = labels[0].name
 
   window.roamAlphaAPI.createBlock({
     location: { 'parent-uid': page_uid, order: 0 },
@@ -142,13 +145,19 @@ const addData = async (query, uid) => {
     if (searchResults.results.length > 0) {
       const firstResult = searchResults.results[0]
       const masterRelease = await getMasterRelease(firstResult.master_id)
-      const mainRelease = await getMainRelease(masterRelease.main_release)
+      const { labels } = await getMainRelease(masterRelease.main_release)
 
-      return addRelease(
-        { ...masterRelease, label: mainRelease.labels[0].name },
-        uid
-      )
+      return addRelease({ ...masterRelease, labels }, uid)
+    }
+
+    const allSearchResults = await getSearchResults(query, false)
+
+    if (allSearchResults.results.length > 0) {
+      const release = await getMainRelease(allSearchResults.results[0].id)
+
+      return addRelease(release, uid)
     } else {
+      window.alert('No results!')
       console.log('Discogs Search :: No Results')
     }
   } catch (err) {
