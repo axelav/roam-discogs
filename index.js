@@ -41,7 +41,12 @@ discogsBtn.handleClick = async (e) => {
     if (!content) return
 
     const btnRegExp = /^(\{\{Discogs Search\}\})(.*)/
-    const [_, btnText, query] = btnRegExp.exec(content)
+    const result = btnRegExp.exec(content)
+
+    if (!result) return
+
+    const [_, btnText, query] = result
+
     if (btnText === '{{Discogs Search}}') {
       const mainText = await addData(query, uid)
 
